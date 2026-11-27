@@ -276,13 +276,13 @@ class MainActivity : FlutterActivity() {
             file.writeText(content)
             return mapOf(
                 "success" to true as Any,
-                "path" to path,
-                "size" to content.length.toLong()
+                "path" to path as Any,
+                "size" to content.length.toLong() as Any
             )
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "path" to path,
+                "path" to path as Any,
                 "error" to e.message ?: "Unknown error"
             )
         }
@@ -299,14 +299,14 @@ class MainActivity : FlutterActivity() {
             file.writeText(content)
             return mapOf(
                 "success" to true as Any,
-                "path" to path,
-                "size" to content.length.toLong(),
+                "path" to path as Any,
+                "size" to content.length.toLong() as Any,
                 "bak" to bakFile.exists()
             )
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "path" to path,
+                "path" to path as Any,
                 "error" to e.message ?: "Unknown error"
             )
         }
@@ -319,20 +319,20 @@ class MainActivity : FlutterActivity() {
             if (!bakFile.exists()) {
                 return mapOf(
                     "success" to false as Any,
-                    "path" to path,
+                    "path" to path as Any,
                     "error" to "No .bak file found"
                 )
             }
             bakFile.copyTo(file, overwrite = true)
             return mapOf(
                 "success" to true as Any,
-                "path" to path,
+                "path" to path as Any,
                 "message" to "Rolled back from .bak"
             )
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "path" to path,
+                "path" to path as Any,
                 "error" to e.message ?: "Unknown error"
             )
         }
@@ -345,13 +345,13 @@ class MainActivity : FlutterActivity() {
             if (!f1.exists()) {
                 return mapOf(
                     "success" to false as Any,
-                    "error" to ("File not found: $path1")
+                    "error" to ("File not found: $path1") as Any
                 )
             }
             if (!f2.exists()) {
                 return mapOf(
                     "success" to false as Any,
-                    "error" to ("File not found: $path2")
+                    "error" to ("File not found: $path2") as Any
                 )
             }
             val content1 = f1.readText().lines()
