@@ -228,8 +228,8 @@ class MainActivity : FlutterActivity() {
                 "lastModified" to f.lastModified()
             ))
         }
-        items.sortBy { it["isDirectory"] as Boolean ? 0 : 1 }
-        items.sortBy { it["name"] as String }
+        items.sortByDescending { it["isDirectory"] as? Boolean ?: false }
+        items.sortBy { it["name"] as? String ?: "" }
         return mapOf("exists" to true, "path" to path, "items" to items)
     }
 

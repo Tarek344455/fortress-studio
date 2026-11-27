@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 
 class FortressForegroundService : Service() {
 
@@ -26,8 +25,13 @@ class FortressForegroundService : Service() {
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setOngoing(true)
             .build()
+        val serviceIntent = Intent(this, FortressForegroundService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
         startForeground(NOTIFICATION_ID, notification)
-        ServiceCompat.startForegroundService(this, Intent(this, FortressForegroundService::class.java))
         return START_STICKY
     }
 
