@@ -337,6 +337,13 @@ class MainActivity : FlutterActivity() {
                 "output" to "Dispatched to Termux RUN_COMMAND: $commandPath ${args.joinToString(" ")}",
                 "command" to commandPath
             )
+        } catch (e: SecurityException) {
+            mapOf(
+                "success" to false,
+                "exitCode" to -1,
+                "error" to "SecurityException: Termux RUN_COMMAND blocked. Enable allow-external-apps=true in ~/.termux/termux.properties and run termux-reload-settings.",
+                "command" to commandPath
+            )
         } catch (e: Exception) {
             mapOf(
                 "success" to false,

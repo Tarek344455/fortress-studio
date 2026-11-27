@@ -111,7 +111,7 @@ class _SettingsState extends State<Settings> {
                     return ListTile(
                       title: const BidiText(data: 'توفر ترمكس', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
-                        data: 'مثبت: ${termuxOk ? "نعم" : "لا"}',
+                        data: 'مثبت: ${_termuxInfo['installed'] == true ? "نعم" : "لا"} | التطبيقات الخارجية: ${_termuxInfo['allowExternalApps'] == true ? "نعم" : "لا"}',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
                       ),
                       trailing: StatusBadge(status: termuxOk ? 'PASS' : 'FAIL'),

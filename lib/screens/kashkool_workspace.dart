@@ -177,6 +177,38 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                           _statusItemBool('Supabase', hasSupabase),
                           _statusItemBool('kashkool_ai_client', hasKashkoolClient),
                           _statusItemBool('خالي من Firebase و Gemini', forbiddenFree),
+                          if (!kashkoolReady) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppTheme.accentAmber.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.accentAmber.withOpacity(0.5), width: 1),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  BidiText(
+                                    data: 'كشكول workspace غير مهيأ محلياً',
+                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.accentAmber, fontFamily: 'Arabic'),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  BidiText(
+                                    data: 'المسار: ${_kashkoolInfo['path'] ?? 'غير محدد'}',
+                                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontFamily: 'Mono', fontStyle: FontStyle.italic),
+                                    forceLtr: true,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  BidiText(
+                                    data: 'أنشئ pubspec.yaml مع flutter و supabase و kashkool_ai_client فقط (بدون Gemini أو Firebase)',
+                                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontFamily: 'Arabic'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
@@ -246,7 +278,12 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
               style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary, fontFamily: 'Arabic'),
             ),
           ),
-          CodeBlock(code: value),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: CodeBlock(code: value),
+            ),
+          ),
         ],
       ),
     );

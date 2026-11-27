@@ -9,6 +9,8 @@ class BidiText extends StatelessWidget {
   final TextStyle? style;
   final TextAlign? textAlign;
   final bool forceLtr;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   const BidiText({
     super.key,
@@ -16,6 +18,8 @@ class BidiText extends StatelessWidget {
     this.style,
     this.textAlign,
     this.forceLtr = false,
+    this.maxLines,
+    this.overflow,
   });
 
   @override
@@ -29,6 +33,8 @@ class BidiText extends StatelessWidget {
         textDirection: dir,
         textAlign: textAlign,
         style: style,
+        maxLines: maxLines,
+        overflow: overflow,
       ),
     );
   }

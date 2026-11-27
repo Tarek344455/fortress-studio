@@ -174,6 +174,8 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                                     style: const TextStyle(fontFamily: 'Mono', fontSize: 11, fontWeight: FontWeight.w500),
                                                     forceLtr: true,
                                                     textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(height: 4),
                                                   BidiText(
@@ -181,6 +183,8 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                                     style: const TextStyle(fontFamily: 'Mono', fontSize: 9, color: AppTheme.textMuted),
                                                     forceLtr: true,
                                                     textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(height: 6),
                                                   StatusBadge(status: isInstalled ? 'PASS' : 'FAIL'),
