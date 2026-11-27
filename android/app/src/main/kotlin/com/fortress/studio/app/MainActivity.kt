@@ -24,9 +24,12 @@ import java.util.concurrent.TimeUnit
 class MainActivity : FlutterActivity() {
     private lateinit var channel: MethodChannel
     private val executor: ExecutorService = Executors.newFixedThreadPool(4)
-    private const val CHANNEL = "fortress.studio.app/bridge"
-    private const val VAULT_PATH = "/mnt/sdcard/opencode/build-vault"
-    private const val VAULT_PATH_ALT = "/sdcard/opencode/build-vault"
+
+    companion object {
+        const val CHANNEL = "fortress.studio.app/bridge"
+        const val VAULT_PATH = "/mnt/sdcard/opencode/build-vault"
+        const val VAULT_PATH_ALT = "/sdcard/opencode/build-vault"
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -158,7 +161,7 @@ class MainActivity : FlutterActivity() {
         val termuxPackage = "com.termux"
         val installed = isPackageInstalled(termuxPackage)
         val allowExternalApps = checkTermuxConfig()
-        return mapOf(
+        return mapOf<String, Any>(
             "installed" to installed,
             "allowExternalApps" to allowExternalApps,
             "package" to termuxPackage
@@ -212,15 +215,15 @@ class MainActivity : FlutterActivity() {
     private fun listDirectory(path: String): Map<String, Any> {
         val file = File(path)
         if (!file.exists()) {
-            return mapOf("exists" to false, "error" to "Path not found: $path")
+            return mapOf<String, Any>("exists" to false, "error" to "Path not found: $path")
         }
         if (!file.isDirectory) {
-            return mapOf("exists" to false, "error" to "Not a directory: $path")
+            return mapOf<String, Any>("exists" to false, "error" to "Not a directory: $path")
         }
         val files = file.listFiles() ?: emptyArray()
         val items = mutableListOf<Map<String, Any>>()
         for (f in files) {
-            items.add(mapOf(
+            items.add(mapOf<String, Any>(
                 "name" to f.name,
                 "path" to f.absolutePath,
                 "isDirectory" to f.isDirectory,
@@ -230,19 +233,19 @@ class MainActivity : FlutterActivity() {
         }
         items.sortByDescending { it["isDirectory"] as? Boolean ?: false }
         items.sortBy { it["name"] as? String ?: "" }
-        return mapOf("exists" to true, "path" to path, "items" to items)
+        return mapOf<String, Any>("exists" to true, "path" to path, "items" to items)
     }
 
     private fun readFile(path: String): Map<String, Any> {
         val file = File(path)
         if (!file.exists()) {
-            return mapOf("exists" to false, "error" to "File not found: $path")
+            return mapOf<String, Any>("exists" to false, "error" to "File not found: $path")
         }
         if (!file.isFile) {
-            return mapOf("exists" to false, "error" to "Not a file: $path")
+            return mapOf<String, Any>("exists" to false, "error" to "Not a file: $path")
         }
         val content = file.readText()
-        return mapOf("exists" to true, "path" to path, "content" to content, "size" to file.length())
+        return mapOf<String, Any>("exists" to true, "path" to path, "content" to content, "size" to file.length())
     }
 
     private fun writeFile(path: String, content: String): Map<String, Any> {
@@ -250,9 +253,9 @@ class MainActivity : FlutterActivity() {
             val file = File(path)
             file.parentFile.mkdirs()
             file.writeText(content)
-            return mapOf("success" to true, "path" to path, "size" to content.length.toLong())
+            return mapOf<String, Any>("success" to true, "path" to path, "size" to content.length.toLong())
         } catch (e: Exception) {
-            return mapOf("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -265,9 +268,9 @@ class MainActivity : FlutterActivity() {
             }
             file.parentFile.mkdirs()
             file.writeText(content)
-            return mapOf("success" to true, "path" to path, "size" to content.length.toLong(), "bak" to bakFile.exists())
+            return mapOf<String, Any>("success" to true, "path" to path, "size" to content.length.toLong(), "bak" to bakFile.exists())
         } catch (e: Exception) {
-            return mapOf("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -276,12 +279,12 @@ class MainActivity : FlutterActivity() {
             val file = File(path)
             val bakFile = File("$path.bak")
             if (!bakFile.exists()) {
-                return mapOf("success" to false, "path" to path, "error" to "No .bak file found")
+                return mapOf<String, Any>("success" to false, "path" to path, "error" to "No .bak file found")
             }
             bakFile.copyTo(file, overwrite = true)
-            return mapOf("success" to true, "path" to path, "message" to "Rolled back from .bak")
+            return mapOf<String, Any>("success" to true, "path" to path, "message" to "Rolled back from .bak")
         } catch (e: Exception) {
-            return mapOf("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "path" to path, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -290,10 +293,10 @@ class MainActivity : FlutterActivity() {
             val f1 = File(path1)
             val f2 = File(path2)
             if (!f1.exists()) {
-                return mapOf("success" to false, "error" to "File not found: $path1")
+                return mapOf<String, Any>("success" to false, "error" to "File not found: $path1")
             }
             if (!f2.exists()) {
-                return mapOf("success" to false, "error" to "File not found: $path2")
+                return mapOf<String, Any>("success" to false, "error" to "File not found: $path2")
             }
             val content1 = f1.readText().lines()
             val content2 = f2.readText().lines()
@@ -308,9 +311,9 @@ class MainActivity : FlutterActivity() {
                     diff.add("  > $line2")
                 }
             }
-            return mapOf("success" to true, "output" to if (diff.isEmpty) "No differences found" else diff.joinToString("\n"))
+            return mapOf<String, Any>("success" to true, "output" to if (diff.isEmpty()) "No differences found" else diff.joinToString("\n"))
         } catch (e: Exception) {
-            return mapOf("success" to false, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -341,12 +344,12 @@ class MainActivity : FlutterActivity() {
             val saviorScript = "$vaultPath/tools/kashkool_studio.py"
             val scriptFile = File(saviorScript)
             if (!scriptFile.exists()) {
-                return mapOf("success" to false, "error" to "kashkool_studio.py not found at $saviorScript")
+                return mapOf<String, Any>("success" to false, "error" to "kashkool_studio.py not found at $saviorScript")
             }
             val args = listOf("python3", saviorScript, "--role", role, "--model", model, "--prompt", prompt)
             return runCommandViaIntent("python3", args, timeoutSec, "kashkool-savior")
         } catch (e: Exception) {
-            return mapOf("success" to false, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -356,7 +359,7 @@ class MainActivity : FlutterActivity() {
             val karkhanaPath = "/mnt/sdcard/opencode/karkhana"
             val karkhanaDir = File(karkhanaPath)
             if (!karkhanaDir.exists()) {
-                return mapOf("success" to false, "error" to "Karkhana directory not found at $karkhanaPath")
+                return mapOf<String, Any>("success" to false, "error" to "Karkhana directory not found at $karkhanaPath")
             }
             val args = if (action == "status") {
                 listOf("status")
@@ -367,7 +370,7 @@ class MainActivity : FlutterActivity() {
             }
             return runCommandViaIntent("git", args, timeoutSec, "github-sync")
         } catch (e: Exception) {
-            return mapOf("success" to false, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -377,12 +380,12 @@ class MainActivity : FlutterActivity() {
             val guardPath = "$vaultPath/tools/fortress_guard.py"
             val guardFile = File(guardPath)
             if (!guardFile.exists()) {
-                return mapOf("success" to false, "error" to "fortress_guard.py not found at $guardPath")
+                return mapOf<String, Any>("success" to false, "error" to "fortress_guard.py not found at $guardPath")
             }
             val args = listOf("python3", guardPath)
             return runCommandViaIntent("python3", args, timeoutSec, "fortress-guard")
         } catch (e: Exception) {
-            return mapOf("success" to false, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -392,7 +395,7 @@ class MainActivity : FlutterActivity() {
             val trinityPath = "$vaultPath/tools/trinity.py"
             val trinityFile = File(trinityPath)
             if (!trinityFile.exists()) {
-                return mapOf("success" to false, "error" to "trinity.py not found at $trinityPath")
+                return mapOf<String, Any>("success" to false, "error" to "trinity.py not found at $trinityPath")
             }
             val fullArgs = mutableListOf<String>()
             fullArgs.add("python3")
@@ -401,7 +404,7 @@ class MainActivity : FlutterActivity() {
             fullArgs.addAll(args)
             return runCommandViaIntent("python3", fullArgs, timeoutSec, "trinity")
         } catch (e: Exception) {
-            return mapOf("success" to false, "error" to e.message ?: "Unknown error")
+            return mapOf<String, Any>("success" to false, "error" to e.message ?: "Unknown error")
         }
     }
 
@@ -413,14 +416,14 @@ class MainActivity : FlutterActivity() {
                 .start()
             val output = readProcessOutput(process, timeoutSec)
             val exitCode = process.waitFor()
-            return mapOf(
+            return mapOf<String, Any>(
                 "success" to exitCode == 0,
                 "exitCode" to exitCode,
                 "output" to output,
                 "command" to cmdLine.joinToString(" ")
             )
         } catch (e: Exception) {
-            return mapOf(
+            return mapOf<String, Any>(
                 "success" to false,
                 "context" to context,
                 "error" to e.message ?: "Unknown error",
@@ -459,7 +462,7 @@ class MainActivity : FlutterActivity() {
         val guardPath = "$vaultPath/tools/fortress_guard.py"
         val trinityPath = "$vaultPath/tools/trinity.py"
         val statePath = "$vaultPath/state/system_state.json"
-        return mapOf(
+        return mapOf<String, Any>(
             "vaultPath" to vaultPath,
             "fortressGuardExists" to File(guardPath).exists(),
             "trinityExists" to File(trinityPath).exists(),
