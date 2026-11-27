@@ -109,6 +109,7 @@ class MainActivity : FlutterActivity() {
                     runAsync(result, "TRINITY_ERROR") { runTrinity(command, args, timeoutSec) }
                 }
                 "checkFortressGuard" -> result.success(checkFortressGuard())
+                "readWorkshopProfile" -> result.success(readWorkshopProfile())
                 else -> result.notImplemented()
             }
         }
@@ -507,6 +508,26 @@ class MainActivity : FlutterActivity() {
             "trinityPath" to trinityPath,
             "statePath" to statePath
         )
+    }
+
+    private fun readWorkshopProfile(): Map<String, Any> {
+        val vaultPath = getVaultPath()
+        val profilePath = "$vaultPath/workshop_profile.json"
+        return try {
+            val file = File(profilePath)
+            if (!file.exists()) {
+                mapOf("exists" to false, "path" to profilePath, "error" to "Workshop profile not found: $profilePath")
+            } else {
+                mapOf(
+                    "exists" to true,
+                    "path" to profilePath,
+                    "content" to file.readText(),
+                    "size" to file.length()
+                )
+            }
+        } catch (e: Exception) {
+            mapOf("exists" to false, "path" to profilePath, "error" to (e.message ?: "Failed to read workshop profile"))
+        }
     }
 
     override fun onDestroy() {
