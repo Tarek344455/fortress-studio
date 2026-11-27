@@ -37,7 +37,7 @@ class _SettingsState extends State<Settings> {
     try {
       final t = await widget.bridge.checkTermux();
       final s = await widget.bridge.checkStoragePermission();
-      final v = await widget.bridge.getVaultPath();
+      await widget.bridge.getVaultPath();
       final g = await widget.bridge.checkFortressGuard();
       setState(() {
         _termuxInfo = t;
