@@ -34,7 +34,6 @@ class _CommandDeckState extends State<CommandDeck> {
 
   final List<String> _roles = const ['Plan', 'Builder', 'Reviewer', 'Guard'];
   final List<String> _models = const ['nemotron', 'deepseek', 'qwen', 'claude-cli', 'opencode', 'kashkool-savior', 'Antigravity'];
-  final List<String> _agents = const ['opencode', 'claude-cli', 'kashkool-savior', 'Antigravity', 'fortress-guard', 'trinity'];
 
   final SystemService _systemService = SystemService();
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/status_badge.dart';
-import '../widgets/code_block.dart';
 import '../services/native_bridge.dart';
+import '../services/cli_service.dart';
 import '../models/cli_tool.dart';
 
 class ToolsStudio extends StatefulWidget {
@@ -174,8 +174,6 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                                     style: const TextStyle(fontFamily: 'Mono', fontSize: 11, fontWeight: FontWeight.w500),
                                                     forceLtr: true,
                                                     textAlign: TextAlign.center,
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(height: 4),
                                                   BidiText(
@@ -183,8 +181,6 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                                     style: TextStyle(fontFamily: 'Mono', fontSize: 9, color: AppTheme.textMuted),
                                                     forceLtr: true,
                                                     textAlign: TextAlign.center,
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(height: 6),
                                                   StatusBadge(status: isInstalled ? 'PASS' : 'FAIL'),

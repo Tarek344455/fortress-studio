@@ -14,7 +14,7 @@ class CliTool {
     required this.name,
     required this.command,
     required this.description,
-    required this.isInstalled,
+    this.isInstalled = false,
     this.lastOutput = '',
     this.lastRun,
     this.isRunning = false,
