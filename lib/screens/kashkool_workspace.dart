@@ -190,9 +190,9 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const BidiText(
+                                  BidiText(
                                     data: 'كشكول workspace غير مهيأ محلياً',
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.accentAmber, fontFamily: 'Arabic'),
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.accentAmber, fontFamily: 'Arabic'),
                                   ),
                                   const SizedBox(height: 4),
                                   BidiText(
@@ -201,9 +201,9 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                                     forceLtr: true,
                                   ),
                                   const SizedBox(height: 4),
-                                  const BidiText(
+                                  BidiText(
                                     data: 'أنشئ pubspec.yaml مع flutter و supabase و kashkool_ai_client فقط (بدون Gemini أو Firebase)',
-                                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontFamily: 'Arabic'),
+                                    style: TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontFamily: 'Arabic'),
                                   ),
                                 ],
                               ),
