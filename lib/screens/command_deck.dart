@@ -230,7 +230,7 @@ class _CommandDeckState extends State<CommandDeck> {
                             children: [
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  initialValue: _selectedRole,
+                                  value: _selectedRole,
                                   decoration: const InputDecoration(
                                     labelText: 'الدور',
                                     labelStyle: TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
@@ -247,7 +247,7 @@ class _CommandDeckState extends State<CommandDeck> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  initialValue: _selectedModel,
+                                  value: _selectedModel,
                                   decoration: const InputDecoration(
                                     labelText: 'الموديل',
                                     labelStyle: TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),

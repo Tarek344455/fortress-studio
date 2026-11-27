@@ -25,7 +25,7 @@ class AppTheme {
         error: accentRed,
         onError: Colors.white,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: glassSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -66,7 +66,7 @@ class AppTheme {
         labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textPrimary, fontFamily: 'Arabic'),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: accentCyan.withValues(alpha: 0.3),
+        selectionColor: accentCyan.withOpacity(0.3),
       ),
     );
   }

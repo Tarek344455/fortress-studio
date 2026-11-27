@@ -172,7 +172,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                       trailing: StatusBadge(status: isInstalled ? 'PASS' : 'FAIL'),
                                       selected: selected,
                                       onTap: () => setState(() => _selectedTool = (tool['name'] ?? '').toString()),
-                                      tileColor: selected ? AppTheme.accentCyan.withValues(alpha: 0.1) : null,
+                                      tileColor: selected ? AppTheme.accentCyan.withOpacity(0.1) : null,
                                     );
                                   },
                                 ),
