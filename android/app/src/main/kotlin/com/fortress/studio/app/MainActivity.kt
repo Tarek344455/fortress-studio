@@ -283,7 +283,7 @@ class MainActivity : FlutterActivity() {
             return mapOf(
                 "success" to false as Any,
                 "path" to path,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -307,7 +307,7 @@ class MainActivity : FlutterActivity() {
             return mapOf(
                 "success" to false as Any,
                 "path" to path,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -333,7 +333,7 @@ class MainActivity : FlutterActivity() {
             return mapOf(
                 "success" to false as Any,
                 "path" to path,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -374,7 +374,7 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -416,7 +416,7 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -443,7 +443,7 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -464,7 +464,7 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -489,7 +489,7 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             return mapOf(
                 "success" to false as Any,
-                "error" to (e.message ?: "Unknown error")
+                "error" to e.message ?: "Unknown error"
             )
         }
     }
@@ -502,17 +502,17 @@ class MainActivity : FlutterActivity() {
                 .start()
             val output = readProcessOutput(process, timeoutSec)
             val exitCode = process.waitFor()
-            return mapOf(
+            return mapOf<String, Any>(
                 "success" to (exitCode == 0),
                 "exitCode" to exitCode,
                 "output" to output,
                 "command" to cmdLine.joinToString(" ")
             )
         } catch (e: Exception) {
-            return mapOf(
+            return mapOf<String, Any>(
                 "success" to false as Any,
                 "context" to context,
-                "error" to (e.message ?: "Unknown error"),
+                "error" to e.message ?: "Unknown error",
                 "command" to command
             )
         }
@@ -548,7 +548,7 @@ class MainActivity : FlutterActivity() {
         val guardPath = "$vaultPath/tools/fortress_guard.py"
         val trinityPath = "$vaultPath/tools/trinity.py"
         val statePath = "$vaultPath/state/system_state.json"
-        return mapOf(
+        return mapOf<String, Any>(
             "vaultPath" to vaultPath,
             "fortressGuardExists" to File(guardPath).exists(),
             "trinityExists" to File(trinityPath).exists(),
