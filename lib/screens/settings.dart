@@ -34,7 +34,6 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> _refreshAll() async {
-    setState(() => _isLoading = true);
     try {
       final t = await widget.bridge.checkTermux();
       final s = await widget.bridge.checkStoragePermission();
@@ -43,13 +42,10 @@ class _SettingsState extends State<Settings> {
       setState(() {
         _termuxInfo = t;
         _storageInfo = s;
-        _vaultPathInfo = v;
         _guardInfo = g;
       });
     } catch (e) {
       setState(() {});
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
