@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/status_badge.dart';
-import '../widgets/code_block.dart';
 import '../services/native_bridge.dart';
 
 class ToolsStudio extends StatefulWidget {
@@ -43,7 +42,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
     try {
       final installed = <String, dynamic>{};
       for (final tool in _registeredTools) {
-        final cmdResult = await widget.bridge.runTermuxCommand('which', [tool['command']!], timeoutSec: 10);
+        final cmdResult = await widget.bridge.runTermuxCommand('which', [tool['command']! as String], timeoutSec: 10);
         installed[tool['name']!] = cmdResult['success'] == true;
       }
       setState(() {

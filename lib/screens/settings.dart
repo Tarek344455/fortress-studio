@@ -25,9 +25,7 @@ class _SettingsState extends State<Settings> {
 
   Map<String, dynamic> _termuxInfo = {};
   Map<String, dynamic> _storageInfo = {};
-  Map<String, dynamic> _vaultPathInfo = {};
   Map<String, dynamic> _guardInfo = {};
-  bool _isLoading = false;
 
   @override
   void initState() {
