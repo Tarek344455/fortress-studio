@@ -42,7 +42,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
     try {
       final installed = <String, dynamic>{};
       for (final tool in _registeredTools) {
-        final cmdResult = await widget.bridge.runTermuxCommand('which', <String>[tool['command']! as String], timeoutSec: 10);
+        final cmdResult = await widget.bridge.runTermuxCommand('which', <String>[tool['command']!], timeoutSec: 10);
         installed[tool['name']!] = cmdResult['success'] == true;
       }
       setState(() {
@@ -70,7 +70,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
       _commandOutput = '';
     });
     try {
-      final args = _commandArgs.isEmpty ? [] : _commandArgs.split(' ');
+      final List<String> args = _commandArgs.isEmpty ? <String>[] : _commandArgs.split(' ');
       final result = await widget.bridge.runTermuxCommand(tool['command']! as String, args, timeoutSec: 60);
       final success = result['success'] == true;
       final output = success ? result['output'] ?? '' : result['error'] ?? 'خطأ غير معروف';
