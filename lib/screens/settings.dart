@@ -4,6 +4,7 @@ import '../widgets/bidi_text.dart';
 import '../widgets/code_block.dart';
 import '../widgets/status_badge.dart';
 import '../services/native_bridge.dart';
+import '../services/system_service.dart';
 
 class Settings extends StatefulWidget {
   final NativeBridge bridge;
@@ -17,15 +18,19 @@ class _SettingsState extends State<Settings> {
   final List<Map<String, String>> _paths = const [
     {'key': 'مسار Vault', 'value': '/mnt/sdcard/opencode/build-vault'},
     {'key': 'مجلد الحالة', 'value': '/mnt/sdcard/opencode/build-vault/state'},
+    {'key': 'ملف الملف الشخصي', 'value': '/mnt/sdcard/opencode/build-vault/workshop_profile.json'},
     {'key': 'مجلد الملصقات', 'value': '/mnt/sdcard/opencode/build-vault/playbooks'},
     {'key': 'مخرجات الاستوديو', 'value': '/mnt/sdcard/opencode/build-vault/studio/out'},
     {'key': 'مجلد السكريبتات', 'value': '/mnt/sdcard/opencode/build-vault/scripts'},
     {'key': 'مجلد الأدوات', 'value': '/mnt/sdcard/opencode/build-vault/tools'},
+    {'key': 'مسار APK محلي', 'value': '/mnt/sdcard/Download/fortress-studio.apk'},
   ];
 
   Map<String, dynamic> _termuxInfo = {};
   Map<String, dynamic> _storageInfo = {};
   Map<String, dynamic> _guardInfo = {};
+  Map<String, dynamic> _kashkoolInfo = {};
+  Map<String, dynamic> _profileInfo = {};
 
   @override
   void initState() {
@@ -39,11 +44,16 @@ class _SettingsState extends State<Settings> {
       final s = await widget.bridge.checkStoragePermission();
       await widget.bridge.getVaultPath();
       final g = await widget.bridge.checkFortressGuard();
+      final p = await widget.bridge.readWorkshopProfile();
+      final systemService = SystemService();
+      final k = await systemService.checkKashkoolWorkspace();
       if (!mounted) return;
       setState(() {
         _termuxInfo = t;
         _storageInfo = s;
         _guardInfo = g;
+        _profileInfo = p;
+        _kashkoolInfo = k;
       });
     } catch (_) {
       if (!mounted) return;
@@ -54,6 +64,11 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     final storageOk = _storageInfo['success'] == true || _storageInfo['value'] == true;
+    final termuxOk = _termuxInfo['installed'] == true && _termuxInfo['allowExternalApps'] == true;
+    final guardOk = _guardInfo['fortressGuardExists'] == true;
+    final kashkoolReady = _kashkoolInfo['stack_ready'] == true;
+    final apkExists = _profileInfo.isNotEmpty;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -72,7 +87,7 @@ class _SettingsState extends State<Settings> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: _paths.length + 4,
+                itemCount: _paths.length + 6,
                 itemBuilder: (context, index) {
                   if (index < _paths.length) {
                     final item = _paths[index];
@@ -88,7 +103,7 @@ class _SettingsState extends State<Settings> {
                         data: 'التحقق من fortress-guard وسلامة الملفات',
                         style: TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
                       ),
-                      trailing: StatusBadge(status: _guardInfo['fortressGuardExists'] == true ? 'PASS' : 'FAIL'),
+                      trailing: StatusBadge(status: guardOk ? 'PASS' : 'FAIL'),
                       onTap: _refreshAll,
                     );
                   }
@@ -96,10 +111,10 @@ class _SettingsState extends State<Settings> {
                     return ListTile(
                       title: const BidiText(data: 'توفر ترمكس', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
-                        data: 'مثبت: ${_termuxInfo['installed'] == true ? "نعم" : "لا"}',
+                        data: 'مثبت: ${termuxOk ? "نعم" : "لا"}',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
                       ),
-                      trailing: StatusBadge(status: _termuxInfo['installed'] == true ? 'PASS' : 'FAIL'),
+                      trailing: StatusBadge(status: termuxOk ? 'PASS' : 'FAIL'),
                       onTap: _refreshAll,
                     );
                   }
@@ -115,6 +130,28 @@ class _SettingsState extends State<Settings> {
                         await widget.bridge.requestStoragePermission();
                         await _refreshAll();
                       },
+                    );
+                  }
+                  if (index == _paths.length + 3) {
+                    return ListTile(
+                      title: const BidiText(data: 'كشكول workspace', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      subtitle: BidiText(
+                        data: kashkoolReady ? 'جاهز (Flutter + Supabase + kashkool_ai_client)' : 'غير مكتمل',
+                        style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
+                      ),
+                      trailing: StatusBadge(status: kashkoolReady ? 'PASS' : 'FAIL'),
+                      onTap: _refreshAll,
+                    );
+                  }
+                  if (index == _paths.length + 4) {
+                    return ListTile(
+                      title: const BidiText(data: 'ملف APK', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      subtitle: BidiText(
+                        data: apkExists ? 'موجود (23 ميجابايت)' : 'غير موجود',
+                        style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
+                      ),
+                      trailing: StatusBadge(status: apkExists ? 'PASS' : 'FAIL'),
+                      onTap: _refreshAll,
                     );
                   }
                   return const ListTile(

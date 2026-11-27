@@ -4,6 +4,7 @@ import 'screens/command_deck.dart';
 import 'screens/vault_explorer.dart';
 import 'screens/tools_studio.dart';
 import 'screens/settings.dart';
+import 'screens/kashkool_workspace.dart';
 import 'theme/app_theme.dart';
 import 'widgets/bidi_text.dart';
 
@@ -40,6 +41,7 @@ class _MainShellState extends State<MainShell> {
     'قيادة المنظومة',
     'مستكشف vault',
     'الأدوات والاستوديو',
+    'مساحة كشكول',
     'الإعدادات',
   ];
 
@@ -55,6 +57,7 @@ class _MainShellState extends State<MainShell> {
       CommandDeck(bridge: _bridge),
       VaultExplorer(bridge: _bridge),
       ToolsStudio(bridge: _bridge),
+      KashkoolWorkspace(bridge: _bridge),
       Settings(bridge: _bridge),
     ];
 
@@ -76,6 +79,7 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(icon: Icon(Icons.dashboard), label: 'القيادة'),
           NavigationDestination(icon: Icon(Icons.folder), label: 'المستكشف'),
           NavigationDestination(icon: Icon(Icons.build), label: 'الأدوات'),
+          NavigationDestination(icon: Icon(Icons.workspaces), label: 'كشكول'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'الإعدادات'),
         ],
       ),

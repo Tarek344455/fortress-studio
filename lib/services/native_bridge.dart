@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 class NativeBridge {
   static const MethodChannel _channel = MethodChannel('fortress.studio.app/bridge');
   static const String _vaultPath = '/mnt/sdcard/opencode/build-vault';
+  static const String _workshopProfile = '$_vaultPath/workshop_profile.json';
 
   final Map<String, String> _webFiles = {
     '$_vaultPath/state/system_state.json': const JsonEncoder.withIndent('  ').convert({
@@ -13,6 +14,8 @@ class NativeBridge {
       'port_8888': '200',
       'port_4000': '200',
       'port_4050': '200',
+      'routing_mode': 'fast',
+      'active_agent': 'nemotron',
       'updated': '2026-11-27T00:00:00Z',
     }),
     '$_vaultPath/state/system_state.json.bak': const JsonEncoder.withIndent('  ').convert({
@@ -20,7 +23,21 @@ class NativeBridge {
       'port_8888': '401',
       'port_4000': '200',
       'port_4050': '000',
+      'routing_mode': 'fast',
+      'active_agent': 'nemotron',
       'updated': '2026-11-26T23:00:00Z',
+    }),
+    '$_vaultPath/workshop_profile.json': const JsonEncoder.withIndent('  ').convert({
+      'vault_path': _vaultPath,
+      'kashkool_app_path': '/mnt/sdcard/opencode/karkhana/products/kashkool',
+      'kashkool_stack': ['flutter', 'supabase', 'kashkool_ai_client'],
+      'forbidden': ['gemini', 'firebase'],
+      'bridge_channel': 'fortress.studio.app/bridge',
+      'termux_package': 'com.termux',
+      'termux_run_action': 'com.termux.RUN_COMMAND',
+      'routing_modes': ['fast', 'builder', 'deep_reasoning', 'guard'],
+      'agents': ['nemotron', 'deepseek', 'qwen', 'claude-cli', 'opencode', 'kashkool-savior', 'Antigravity'],
+      'updated': '2026-11-27T00:00:00Z',
     }),
     '$_vaultPath/tools/fortress_guard.py':
         'import json\nprint(json.dumps({"status": "PASS", "vault": "$_vaultPath"}, indent=2))\n',
@@ -282,6 +299,25 @@ class NativeBridge {
             'stateExists': _webFiles.containsKey('$_vaultPath/state/system_state.json'),
           }),
         };
+      case 'readWorkshopProfile':
+        final content = _webFiles[_workshopProfile];
+        if (content == null) {
+          return <String, dynamic>{'exists': false, 'error': 'Workshop profile not found: $_workshopProfile'};
+        }
+        return <String, dynamic>{
+          'exists': true,
+          'path': _workshopProfile,
+          'content': content,
+          'size': content.length,
+        };
+      case 'runGitHubSync':
+        final repo = (args['repo'] ?? '').toString();
+        final action = (args['action'] ?? 'status').toString();
+        return <String, dynamic>{
+          'success': true,
+          'exitCode': 0,
+          'output': '[github-sync] repo=$repo action=$action\nLocal-only mode: no remote operations performed',
+        };
       default:
         return <String, dynamic>{'success': true, 'exitCode': 0, 'output': 'OK'};
     }
@@ -384,5 +420,9 @@ class NativeBridge {
 
   Future<Map<String, dynamic>> checkFortressGuard() async {
     return await callMethod('checkFortressGuard');
+  }
+
+  Future<Map<String, dynamic>> readWorkshopProfile() async {
+    return await callMethod('readWorkshopProfile');
   }
 }

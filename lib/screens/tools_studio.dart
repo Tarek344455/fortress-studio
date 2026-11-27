@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/status_badge.dart';
+import '../widgets/code_block.dart';
 import '../services/native_bridge.dart';
+import '../models/cli_tool.dart';
 
 class ToolsStudio extends StatefulWidget {
   final NativeBridge bridge;
@@ -13,23 +15,12 @@ class ToolsStudio extends StatefulWidget {
 }
 
 class _ToolsStudioState extends State<ToolsStudio> {
-  List<Map<String, dynamic>> _tools = [];
+  List<CliTool> _tools = [];
   bool _isLoading = false;
-  String _selectedTool = '';
+  CliTool? _selectedTool;
   final TextEditingController _argsController = TextEditingController();
   String _commandOutput = '';
   bool _isRunning = false;
-
-  final List<Map<String, String>> _registeredTools = const [
-    {'name': 'trinity', 'command': 'trinity', 'description': 'منظم ترينيتي فيرترس'},
-    {'name': 'fortress-guard', 'command': 'fortress-guard', 'description': 'حارس التحقق من النظام'},
-    {'name': 'start-savior', 'command': 'start-savior', 'description': 'تشغيل سفير على المنفذ 4000'},
-    {'name': 'start-deck', 'command': 'start-deck', 'description': 'تشغيل حصن سطح السفينة على المنفذ 4050'},
-    {'name': 'opencode', 'command': 'opencode', 'description': 'واجهة أوبن كود'},
-    {'name': 'claude-free', 'command': 'claude-free', 'description': 'كلود فري عبر بروكسي سفير'},
-    {'name': 'agy-cli', 'command': 'agy-cli', 'description': 'أداة أي جي آي'},
-    {'name': 'kashkool-studio', 'command': 'kashkool-studio', 'description': 'استوديو كشكول'},
-  ];
 
   @override
   void initState() {
@@ -46,22 +37,14 @@ class _ToolsStudioState extends State<ToolsStudio> {
   Future<void> _refreshTools() async {
     setState(() => _isLoading = true);
     try {
-      final installed = <String, bool>{};
-      for (final tool in _registeredTools) {
-        final cmdResult = await widget.bridge.runTermuxCommand('which', <String>[tool['command']!], timeoutSec: 10);
-        installed[tool['name']!] = cmdResult['success'] == true;
-      }
+      final installed = <CliTool>[];
+      for (final tool in widget.bridge.routingEngine.profiles.expand((p) => p.agents).toSet().isNotEmpty ? <CliTool>[] : <CliTool>[]) {}
+      for (final tool in widget.bridge.routingEngine.profiles.expand((p) => p.agents).toList()) {}
+      final cliService = CliService(bridge: widget.bridge);
+      final refreshed = await cliService.refreshTools();
       if (!mounted) return;
       setState(() {
-        _tools = _registeredTools.map((t) {
-          final name = t['name']!;
-          return {
-            'name': name,
-            'command': t['command']!,
-            'description': t['description']!,
-            'isInstalled': installed[name] ?? false,
-          };
-        }).toList();
+        _tools = refreshed;
       });
     } catch (_) {
       if (!mounted) return;
@@ -73,23 +56,23 @@ class _ToolsStudioState extends State<ToolsStudio> {
     }
   }
 
-  Future<void> _runTool(Map<String, dynamic> tool) async {
+  Future<void> _runTool(CliTool tool) async {
     setState(() {
-      _selectedTool = (tool['name'] ?? '').toString();
+      _selectedTool = tool;
       _isRunning = true;
       _commandOutput = '';
     });
     try {
       final rawArgs = _argsController.text.trim();
       final List<String> args = rawArgs.isEmpty ? <String>[] : rawArgs.split(RegExp(r'\s+'));
-      final result = await widget.bridge.runTermuxCommand(tool['command'].toString(), args, timeoutSec: 60);
+      final result = await widget.bridge.runTermuxCommand(tool.command, args, timeoutSec: 60);
       final success = result['success'] == true;
       final output = success
           ? (result['output'] ?? '').toString()
           : (result['error'] ?? 'خطأ غير معروف').toString();
       if (!mounted) return;
       setState(() {
-        _commandOutput = 'رمز الخروج: ${result['exitCode'] ?? -1}\nالمخرج:\n$output';
+        _commandOutput = 'رمز الخروج: ${result['exitCode'] ?? -1}\nالأمر: ${result['command'] ?? tool.command}\nالمخرج:\n$output';
         _isRunning = false;
       });
     } catch (e) {
@@ -149,33 +132,71 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                 ),
                               ),
                               Expanded(
-                                child: ListView.builder(
-                                  itemCount: _tools.length,
-                                  itemBuilder: (context, index) {
-                                    final tool = _tools[index];
-                                    final isInstalled = tool['isInstalled'] == true;
-                                    final selected = tool['name'] == _selectedTool;
-                                    return ListTile(
-                                      leading: Icon(
-                                        isInstalled ? Icons.check_circle : Icons.error,
-                                        color: isInstalled ? AppTheme.accentGreen : AppTheme.accentRed,
-                                        size: 20,
+                                child: _tools.isEmpty
+                                    ? const Center(
+                                        child: BidiText(
+                                          data: 'لا توجد أدوات',
+                                          style: TextStyle(color: AppTheme.textMuted, fontFamily: 'Arabic'),
+                                        ),
+                                      )
+                                    : GridView.builder(
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          childAspectRatio: 3.2,
+                                          crossAxisSpacing: 8,
+                                          mainAxisSpacing: 8,
+                                        ),
+                                        itemCount: _tools.length,
+                                        itemBuilder: (context, index) {
+                                          final tool = _tools[index];
+                                          final isInstalled = tool.isInstalled;
+                                          final selected = tool == _selectedTool;
+                                          return InkWell(
+                                            onTap: () => setState(() => _selectedTool = tool),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppTheme.glassSurface,
+                                                borderRadius: BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  color: selected ? AppTheme.accentCyan : AppTheme.glassBorder,
+                                                  width: selected ? 2 : 1,
+                                                ),
+                                              ),
+                                              padding: const EdgeInsets.all(12),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    isInstalled ? Icons.check_circle : Icons.error,
+                                                    color: isInstalled ? AppTheme.accentGreen : AppTheme.accentRed,
+                                                    size: 20,
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  BidiText(
+                                                    data: tool.name,
+                                                    style: const TextStyle(fontFamily: 'Mono', fontSize: 11, fontWeight: FontWeight.w500),
+                                                    forceLtr: true,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  BidiText(
+                                                    data: tool.agentType,
+                                                    style: TextStyle(fontFamily: 'Mono', fontSize: 9, color: AppTheme.textMuted),
+                                                    forceLtr: true,
+                                                    textAlign: TextAlign.center,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  StatusBadge(status: isInstalled ? 'PASS' : 'FAIL'),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                      title: BidiText(
-                                        data: (tool['name'] ?? '').toString(),
-                                        style: const TextStyle(fontFamily: 'Arabic', fontSize: 14, fontWeight: FontWeight.w500),
-                                      ),
-                                      subtitle: BidiText(
-                                        data: (tool['description'] ?? '').toString(),
-                                        style: const TextStyle(fontFamily: 'Arabic', fontSize: 12, color: AppTheme.textSecondary),
-                                      ),
-                                      trailing: StatusBadge(status: isInstalled ? 'PASS' : 'FAIL'),
-                                      selected: selected,
-                                      onTap: () => setState(() => _selectedTool = (tool['name'] ?? '').toString()),
-                                      tileColor: selected ? AppTheme.accentCyan.withOpacity(0.1) : null,
-                                    );
-                                  },
-                                ),
                               ),
                             ],
                           ),
@@ -195,10 +216,18 @@ class _ToolsStudioState extends State<ToolsStudio> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               BidiText(
-                                data: _selectedTool.isEmpty ? 'اختر أداة' : _selectedTool,
+                                data: _selectedTool == null ? 'اختر أداة' : _selectedTool!.name,
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 8),
+                              if (_selectedTool != null) ...[
+                                BidiText(
+                                  data: 'النوع: ${_selectedTool!.agentType}  |  التوجيه: ${_selectedTool!.routingMode}  |  الأولوية: ${_selectedTool!.priority}',
+                                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted, fontFamily: 'Mono', fontStyle: FontStyle.italic),
+                                  forceLtr: true,
+                                ),
+                                const SizedBox(height: 12),
+                              ],
                               TextField(
                                 controller: _argsController,
                                 decoration: const InputDecoration(
@@ -211,14 +240,9 @@ class _ToolsStudioState extends State<ToolsStudio> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _isRunning || _selectedTool.isEmpty
+                                  onPressed: _isRunning || _selectedTool == null
                                       ? null
-                                      : () {
-                                          final matches = _tools.where((t) => t['name'] == _selectedTool);
-                                          if (matches.isNotEmpty) {
-                                            _runTool(matches.first);
-                                          }
-                                        },
+                                      : () => _runTool(_selectedTool!),
                                   child: BidiText(
                                     data: _isRunning ? 'جارٍ التنفيذ...' : 'تنفيذ الأمر',
                                     style: const TextStyle(fontFamily: 'Arabic'),

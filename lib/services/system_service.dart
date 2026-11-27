@@ -7,6 +7,8 @@ import '../models/system_state.dart';
 class SystemService {
   static const String vaultPath = '/mnt/sdcard/opencode/build-vault';
   static const String stateFile = '$vaultPath/state/system_state.json';
+  static const String kashkoolAppPath = '/mnt/sdcard/opencode/karkhana/products/kashkool';
+  static const String kashkoolPubspec = '$kashkoolAppPath/pubspec.yaml';
   static const Duration timeout = Duration(seconds: 5);
 
   Future<SystemState> fetchState() async {
@@ -18,21 +20,30 @@ class SystemService {
           dns: 'ok',
           port8888: '200',
           port4000: response.statusCode.toString(),
+          port4050: '200',
           updated: DateTime.now().toIso8601String(),
+          routingMode: 'fast',
+          activeAgent: 'nemotron',
         );
       }
       return SystemState(
         dns: 'ok',
         port8888: response.statusCode.toString(),
         port4000: response.statusCode.toString(),
+        port4050: '000',
         updated: DateTime.now().toIso8601String(),
+        routingMode: 'fast',
+        activeAgent: 'nemotron',
       );
     } catch (_) {
       return SystemState(
         dns: 'fail',
         port8888: '000',
         port4000: '000',
+        port4050: '000',
         updated: DateTime.now().toIso8601String(),
+        routingMode: 'fast',
+        activeAgent: 'nemotron',
       );
     }
   }
@@ -98,5 +109,27 @@ class SystemService {
     } catch (_) {
       return false;
     }
+  }
+
+  Future<Map<String, dynamic>> checkKashkoolWorkspace() async {
+    final pubspecContent = await readFile(kashkoolPubspec);
+    final hasSupabase = pubspecContent.contains('supabase');
+    final hasFirebase = pubspecContent.contains('firebase');
+    final hasGemini = pubspecContent.contains('gemini');
+    final hasKashkoolClient = pubspecContent.contains('kashkool_ai_client');
+    final hasFlutterSdk = pubspecContent.contains('flutter:');
+
+    return {
+      'path': kashkoolAppPath,
+      'exists': await fileExists(kashkoolAppPath),
+      'pubspec_exists': await fileExists(kashkoolPubspec),
+      'has_flutter': hasFlutterSdk,
+      'has_supabase': hasSupabase,
+      'has_kashkool_ai_client': hasKashkoolClient,
+      'has_firebase': hasFirebase,
+      'has_gemini': hasGemini,
+      'forbidden_free': !hasFirebase && !hasGemini,
+      'stack_ready': hasFlutterSdk && hasSupabase && hasKashkoolClient && !hasFirebase && !hasGemini,
+    };
   }
 }

@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/code_block.dart';
 import '../services/native_bridge.dart';
+import '../services/system_service.dart';
 
 class CommandDeck extends StatefulWidget {
   final NativeBridge bridge;
@@ -32,7 +33,10 @@ class _CommandDeckState extends State<CommandDeck> {
   String _guardOutput = '';
 
   final List<String> _roles = const ['Plan', 'Builder', 'Reviewer', 'Guard'];
-  final List<String> _models = const ['nemotron', 'deepseek', 'qwen', 'claude-cli'];
+  final List<String> _models = const ['nemotron', 'deepseek', 'qwen', 'claude-cli', 'opencode', 'kashkool-savior', 'Antigravity'];
+  final List<String> _agents = const ['opencode', 'claude-cli', 'kashkool-savior', 'Antigravity', 'fortress-guard', 'trinity'];
+
+  final SystemService _systemService = SystemService();
 
   @override
   void initState() {
@@ -54,12 +58,14 @@ class _CommandDeckState extends State<CommandDeck> {
       final s = await widget.bridge.checkStoragePermission();
       final v = await widget.bridge.getVaultPath();
       final g = await widget.bridge.checkFortressGuard();
+      final k = await _systemService.checkKashkoolWorkspace();
       if (!mounted) return;
       setState(() {
         _termuxInfo = t;
         _storageInfo = s;
         _vaultPathInfo = v;
         _guardInfo = g;
+        _kashkoolWorkspace = k;
       });
     } catch (_) {
       if (!mounted) return;
@@ -70,6 +76,8 @@ class _CommandDeckState extends State<CommandDeck> {
       }
     }
   }
+
+  Map<String, dynamic> _kashkoolWorkspace = {};
 
   Future<void> _runCommand() async {
     final raw = _commandController.text.trim();
@@ -212,6 +220,11 @@ class _CommandDeckState extends State<CommandDeck> {
                           if (_vaultPathInfo.isNotEmpty)
                             CodeBlock(
                               code: 'مسار Vault: ${_vaultPathInfo['value'] ?? _vaultPathInfo.toString()}\nالحارس: ${_guardInfo['fortressGuardExists'] == true ? 'موجود' : 'غير موجود'}\nترينيتي: ${_guardInfo['trinityExists'] == true ? 'موجود' : 'غير موجود'}\nالحالة: ${_guardInfo['stateExists'] == true ? 'موجود' : 'غير موجود'}',
+                            ),
+                          const SizedBox(height: 12),
+                          if (_kashkoolWorkspace.isNotEmpty)
+                            CodeBlock(
+                              code: 'كشكول workspace: ${_kashkoolWorkspace['path']}\nموجود: ${_kashkoolWorkspace['exists'] == true ? 'نعم' : 'لا'}\nالمكدس جاهز: ${_kashkoolWorkspace['stack_ready'] == true ? 'نعم' : 'لا'}\nخالي من Gemini/Firebase: ${_kashkoolWorkspace['forbidden_free'] == true ? 'نعم' : 'لا'}',
                             ),
                         ],
                       ),
