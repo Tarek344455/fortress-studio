@@ -19,13 +19,13 @@ class CliTool {
 
   factory CliTool.fromJson(Map<String, dynamic> json) {
     return CliTool(
-      name: json['name'] ?? '',
-      command: json['command'] ?? '',
-      description: json['description'] ?? '',
-      isInstalled: json['is_installed'] ?? false,
-      lastOutput: json['last_output'] ?? '',
-      lastRun: json['last_run'] != null ? DateTime.tryParse(json['last_run']) : null,
-      isRunning: json['is_running'] ?? false,
+      name: (json['name'] ?? '').toString(),
+      command: (json['command'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      isInstalled: json['is_installed'] == true,
+      lastOutput: (json['last_output'] ?? '').toString(),
+      lastRun: json['last_run'] is String ? DateTime.tryParse(json['last_run'] as String) : null,
+      isRunning: json['is_running'] == true,
     );
   }
 

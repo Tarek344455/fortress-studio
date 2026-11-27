@@ -17,8 +17,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: obsidian,
-      colorScheme: ColorScheme.dark(
-        background: obsidian,
+      colorScheme: const ColorScheme.dark(
         surface: glassSurface,
         onSurface: textPrimary,
         primary: accentCyan,
@@ -26,12 +25,12 @@ class AppTheme {
         error: accentRed,
         onError: Colors.white,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: glassSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: glassBorder, width: 1),
+          side: const BorderSide(color: glassBorder, width: 1),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -39,17 +38,17 @@ class AppTheme {
         fillColor: glassSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: glassBorder),
+          borderSide: const BorderSide(color: glassBorder),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: glassBorder),
+          borderSide: const BorderSide(color: glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: accentCyan, width: 1.5),
+          borderSide: const BorderSide(color: accentCyan, width: 1.5),
         ),
-        hintStyle: TextStyle(color: textMuted),
+        hintStyle: const TextStyle(color: textMuted),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -59,7 +58,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textPrimary, fontFamily: 'Arabic'),
         displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: textPrimary, fontFamily: 'Arabic'),
         bodyLarge: TextStyle(fontSize: 16, color: textPrimary, fontFamily: 'Arabic'),
@@ -67,7 +66,7 @@ class AppTheme {
         labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textPrimary, fontFamily: 'Arabic'),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: accentCyan.withOpacity(0.3),
+        selectionColor: accentCyan.withValues(alpha: 0.3),
       ),
     );
   }
@@ -93,7 +92,12 @@ class GlassCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final bool bordered;
 
-  const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(16), this.bordered = true});
+  const GlassCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+    this.bordered = true,
+  });
 
   @override
   Widget build(BuildContext context) {

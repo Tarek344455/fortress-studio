@@ -20,8 +20,8 @@ class CliService {
   Future<CliToolResult> runCommand(String command, List<String> args) async {
     try {
       final process = await Process.start(command, args);
-      final stdout = await process.stdout.transform(utf8.decoder).join();
-      final stderr = await process.stderr.transform(utf8.decoder).join();
+      final stdout = await process.stdout.transform(utf8.decoder).join().timeout(commandTimeout);
+      final stderr = await process.stderr.transform(utf8.decoder).join().timeout(commandTimeout);
       final exitCode = await process.exitCode.timeout(commandTimeout);
       return CliToolResult(
         exitCode: exitCode,
@@ -50,7 +50,7 @@ class CliService {
     try {
       final result = await runCommand('which', [command]);
       return result.success;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }

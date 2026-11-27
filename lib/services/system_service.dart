@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/system_state.dart';
@@ -25,13 +27,27 @@ class SystemService {
         port4000: response.statusCode.toString(),
         updated: DateTime.now().toIso8601String(),
       );
-    } catch (e) {
+    } catch (_) {
       return SystemState(
         dns: 'fail',
         port8888: '000',
         port4000: '000',
         updated: DateTime.now().toIso8601String(),
       );
+    }
+  }
+
+  Future<SystemState?> readLocalStateFile() async {
+    try {
+      final content = await readFile(stateFile);
+      if (content.isEmpty) return null;
+      final decoded = jsonDecode(content);
+      if (decoded is Map<String, dynamic>) {
+        return SystemState.fromJson(decoded);
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -44,18 +60,18 @@ class SystemService {
     ];
     for (final check in checks) {
       try {
-        final uri = Uri.parse(check['url'] as String);
+        final uri = Uri.parse(check['url']!);
         final response = await http.get(uri).timeout(timeout);
         components.add(ComponentStatus(
-          name: check['name'] as String,
-          port: check['port'] as String,
+          name: check['name']!,
+          port: check['port']!,
           httpCode: response.statusCode.toString(),
           isOnline: response.statusCode >= 200 && response.statusCode < 500,
         ));
-      } catch (e) {
+      } catch (_) {
         components.add(ComponentStatus(
-          name: check['name'] as String,
-          port: check['port'] as String,
+          name: check['name']!,
+          port: check['port']!,
           httpCode: '000',
           isOnline: false,
         ));
@@ -71,7 +87,7 @@ class SystemService {
         return await file.readAsString();
       }
       return '';
-    } catch (e) {
+    } catch (_) {
       return '';
     }
   }
@@ -79,7 +95,7 @@ class SystemService {
   Future<bool> fileExists(String path) async {
     try {
       return await File(path).exists();
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
