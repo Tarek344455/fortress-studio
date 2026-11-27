@@ -71,7 +71,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
     });
     try {
       final args = _commandArgs.isEmpty ? [] : _commandArgs.split(' ');
-      final result = await widget.bridge.runTermuxCommand(tool['command'], args, timeoutSec: 60);
+      final result = await widget.bridge.runTermuxCommand(tool['command']! as String, args, timeoutSec: 60);
       final success = result['success'] == true;
       final output = success ? result['output'] ?? '' : result['error'] ?? 'خطأ غير معروف';
       setState(() {
