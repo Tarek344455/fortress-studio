@@ -12,7 +12,7 @@ class BidiText extends StatelessWidget {
   final int? maxLines;
   final TextOverflow? overflow;
 
-  const BidiText({
+  BidiText({
     super.key,
     required this.data,
     this.style,
