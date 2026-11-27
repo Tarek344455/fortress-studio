@@ -12,5 +12,3 @@ if (flutterRoot == null) {
 if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found.")
 }
-
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
