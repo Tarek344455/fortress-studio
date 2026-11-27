@@ -178,7 +178,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                                   const SizedBox(height: 4),
                                                   BidiText(
                                                     data: tool.agentType,
-                                                    style: TextStyle(fontFamily: 'Mono', fontSize: 9, color: AppTheme.textMuted),
+                                                    style: const TextStyle(fontFamily: 'Mono', fontSize: 9, color: AppTheme.textMuted),
                                                     forceLtr: true,
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -216,7 +216,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                               if (_selectedTool != null) ...[
                                 BidiText(
                                   data: 'النوع: ${_selectedTool!.agentType}  |  التوجيه: ${_selectedTool!.routingMode}  |  الأولوية: ${_selectedTool!.priority}',
-                                  style: TextStyle(fontSize: 11, color: AppTheme.textMuted, fontFamily: 'Mono', fontStyle: FontStyle.italic),
+                                  style: const TextStyle(fontSize: 11, color: AppTheme.textMuted, fontFamily: 'Mono', fontStyle: FontStyle.italic),
                                   forceLtr: true,
                                 ),
                                 const SizedBox(height: 12),
