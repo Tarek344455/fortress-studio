@@ -13,10 +13,10 @@ class SystemState {
 
   factory SystemState.fromJson(Map<String, dynamic> json) {
     return SystemState(
-      dns: json['dns'] ?? 'unknown',
-      port8888: json['port_8888'] ?? '000',
-      port4000: json['port_4000'] ?? '000',
-      updated: json['updated'] ?? '',
+      dns: (json['dns'] ?? 'unknown').toString(),
+      port8888: (json['port_8888'] ?? '000').toString(),
+      port4000: (json['port_4000'] ?? '000').toString(),
+      updated: (json['updated'] ?? '').toString(),
     );
   }
 

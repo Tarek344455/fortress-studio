@@ -22,11 +22,14 @@ class BidiText extends StatelessWidget {
   Widget build(BuildContext context) {
     final isArabic = containsArabic(data) && !forceLtr;
     final dir = isArabic ? TextDirection.rtl : TextDirection.ltr;
-    return Text(
-      data,
+    return Directionality(
       textDirection: dir,
-      textAlign: textAlign,
-      style: style,
+      child: Text(
+        data,
+        textDirection: dir,
+        textAlign: textAlign,
+        style: style,
+      ),
     );
   }
 }

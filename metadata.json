@@ -1,0 +1,5 @@
+{
+  "name": "Fortress Studio",
+  "description": "Fortress Studio Command Center for managing Vault files, CLI tools, Alpine proot commands, kashkool-savior, and fortress-guard.",
+  "requestFramePermissions": []
+}

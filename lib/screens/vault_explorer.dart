@@ -22,12 +22,18 @@ class _VaultExplorerState extends State<VaultExplorer> {
   bool _isLoading = false;
   bool _showDiff = false;
   bool _editing = false;
-  String _editedContent = '';
+  final TextEditingController _editorController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadDirectory(_currentPath);
+  }
+
+  @override
+  void dispose() {
+    _editorController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadDirectory(String path) async {
@@ -40,23 +46,27 @@ class _VaultExplorerState extends State<VaultExplorer> {
       _diffOutput = '';
       _showDiff = false;
       _editing = false;
-      _editedContent = '';
+      _editorController.clear();
     });
     try {
       final result = await widget.bridge.listDirectory(path);
+      if (!mounted) return;
       if (result['exists'] == true) {
-        setState(() {
-          _items = List<Map<String, dynamic>>.from(result['items'] ?? []);
-        });
+        final rawItems = result['items'];
+        final parsed = rawItems is List
+            ? rawItems.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList()
+            : <Map<String, dynamic>>[];
+        setState(() => _items = parsed);
       } else {
-        setState(() {
-          _items = [];
-        });
+        setState(() => _items = []);
       }
-    } catch (e) {
-      setState(() {});
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _items = []);
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -69,20 +79,20 @@ class _VaultExplorerState extends State<VaultExplorer> {
       _diffOutput = '';
       _showDiff = false;
       _editing = false;
-      _editedContent = '';
+      _editorController.clear();
     });
     try {
       final result = await widget.bridge.readFile(path);
+      if (!mounted) return;
       if (result['exists'] == true) {
+        final content = (result['content'] ?? '').toString();
         setState(() {
-          _fileContent = result['content'] ?? '';
-          _editedContent = _fileContent;
+          _fileContent = content;
+          _editorController.text = content;
         });
         final bakResult = await widget.bridge.readFile('$path.bak');
-        if (bakResult['exists'] == true) {
-          setState(() {
-            _bakContent = bakResult['content'] ?? '';
-          });
+        if (mounted && bakResult['exists'] == true) {
+          setState(() => _bakContent = (bakResult['content'] ?? '').toString());
         }
       } else {
         setState(() {
@@ -90,11 +100,14 @@ class _VaultExplorerState extends State<VaultExplorer> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _fileContent = 'خطأ في قراءة الملف: $e';
       });
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -107,57 +120,69 @@ class _VaultExplorerState extends State<VaultExplorer> {
     });
     try {
       final result = await widget.bridge.diffFiles(_selectedFile, '$_selectedFile.bak');
+      if (!mounted) return;
       setState(() {
-        _diffOutput = result['output'] ?? result['error'] ?? 'لا يوجد فرق';
+        _diffOutput = (result['output'] ?? result['error'] ?? 'لا يوجد فرق').toString();
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _diffOutput = 'خطأ في حساب الفرق: $e';
       });
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Future<void> _atomicWrite() async {
     if (_selectedFile.isEmpty) return;
+    final nextContent = _editorController.text;
     setState(() {
       _isLoading = true;
       _editing = false;
     });
     try {
-      final result = await widget.bridge.atomicWrite(_selectedFile, _editedContent);
+      final result = await widget.bridge.atomicWrite(_selectedFile, nextContent);
+      if (!mounted) return;
       if (result['success'] == true) {
-        setState(() {
-          _fileContent = _editedContent;
-        });
+        setState(() => _fileContent = nextContent);
+        final bakResult = await widget.bridge.readFile('$_selectedFile.bak');
+        if (mounted && bakResult['exists'] == true) {
+          setState(() => _bakContent = (bakResult['content'] ?? '').toString());
+        }
       } else {
         setState(() {
           _fileContent = 'خطأ في الحفظ: ${result['error'] ?? 'غير معروف'}';
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _fileContent = 'خطأ في الحفظ: $e';
       });
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Future<void> _rollbackFile() async {
     if (_selectedFile.isEmpty) return;
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
     try {
       final result = await widget.bridge.rollbackFile(_selectedFile);
+      if (!mounted) return;
       if (result['success'] == true) {
         final readResult = await widget.bridge.readFile(_selectedFile);
-        if (readResult['exists'] == true) {
+        if (mounted && readResult['exists'] == true) {
+          final content = (readResult['content'] ?? '').toString();
           setState(() {
-            _fileContent = readResult['content'] ?? '';
-            _editedContent = _fileContent;
+            _fileContent = content;
+            _editorController.text = content;
+            _showDiff = false;
           });
         }
       } else {
@@ -166,18 +191,21 @@ class _VaultExplorerState extends State<VaultExplorer> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _fileContent = 'خطأ في التراجع: $e';
       });
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Widget _buildItem(Map<String, dynamic> item) {
-    final isDir = item['isDirectory'] ?? false;
-    final name = item['name'] ?? '';
-    final path = item['path'] ?? '';
+    final isDir = item['isDirectory'] == true;
+    final name = (item['name'] ?? '').toString();
+    final path = (item['path'] ?? '').toString();
     return ListTile(
       leading: Icon(isDir ? Icons.folder : Icons.description, color: AppTheme.accentCyan, size: 20),
       title: BidiText(
@@ -204,18 +232,13 @@ class _VaultExplorerState extends State<VaultExplorer> {
           children: [
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppTheme.glassSurface,
                 border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: CodeBlock(
-                      code: _currentPath,
-                      onCopy: () {},
-                    ),
-                  ),
+                  Expanded(child: CodeBlock(code: _currentPath)),
                 ],
               ),
             ),
@@ -227,8 +250,9 @@ class _VaultExplorerState extends State<VaultExplorer> {
                     child: Column(
                       children: [
                         Container(
+                          width: double.infinity,
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppTheme.glassSurface,
                             border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
                           ),
@@ -238,12 +262,12 @@ class _VaultExplorerState extends State<VaultExplorer> {
                           ),
                         ),
                         Expanded(
-                          child: _isLoading
+                          child: _isLoading && _items.isEmpty
                               ? const Center(child: CircularProgressIndicator())
                               : ListView.builder(
-                            itemCount: _items.length,
-                            itemBuilder: (context, index) => _buildItem(_items[index]),
-                          ),
+                                  itemCount: _items.length,
+                                  itemBuilder: (context, index) => _buildItem(_items[index]),
+                                ),
                         ),
                       ],
                     ),
@@ -255,18 +279,13 @@ class _VaultExplorerState extends State<VaultExplorer> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppTheme.glassSurface,
                             border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
                           ),
                           child: Row(
                             children: [
-                              Expanded(
-                                child: CodeBlock(
-                                  code: _selectedFile,
-                                  onCopy: () {},
-                                ),
-                              ),
+                              Expanded(child: CodeBlock(code: _selectedFile)),
                               if (_selectedFile.isNotEmpty) ...[
                                 IconButton(
                                   icon: const Icon(Icons.refresh, size: 20),
@@ -288,18 +307,22 @@ class _VaultExplorerState extends State<VaultExplorer> {
                         ),
                         if (_showDiff && _diffOutput.isNotEmpty)
                           Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0D1117),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFF30363D), width: 1),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: BidiText(
-                                  data: _diffOutput,
-                                  style: const TextStyle(fontFamily: 'Mono', fontSize: 11, color: Color(0xFFE4E4E7), height: 1.4),
-                                  forceLtr: true,
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0D1117),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xFF30363D), width: 1),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: BidiText(
+                                    data: _diffOutput,
+                                    style: const TextStyle(fontFamily: 'Mono', fontSize: 11, color: Color(0xFFE4E4E7), height: 1.4),
+                                    forceLtr: true,
+                                  ),
                                 ),
                               ),
                             ),
@@ -309,91 +332,83 @@ class _VaultExplorerState extends State<VaultExplorer> {
                             child: _isLoading
                                 ? const Center(child: CircularProgressIndicator())
                                 : SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (_editing || _editedContent.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const BidiText(
-                                            data: 'التعديل الذري (سيتم إنشاء .bak تلقائيًا)',
-                                            style: TextStyle(fontSize: 12, color: AppTheme.textMuted, fontFamily: 'Arabic'),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          TextField(
-                                            maxLines: 10,
-                                            style: const TextStyle(fontFamily: 'Mono', fontSize: 11, color: Color(0xFFE4E4E7)),
-                                            controller: TextEditingController(text: _editedContent),
-                                            onChanged: (v) => _editedContent = v,
-                                            decoration: InputDecoration(
-                                              filled: true,
-                                              fillColor: const Color(0xFF0D1117),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                                borderSide: BorderSide(color: AppTheme.glassBorder),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-                                          Row(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        if (_editing)
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              SizedBox(
-                                                width: double.infinity,
-                                                child: ElevatedButton(
-                                                  onPressed: _isLoading ? null : _atomicWrite,
-                                                  child: const BidiText(data: 'حفظ ذري مع .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                              const BidiText(
+                                                data: 'التعديل الذري (سيتم إنشاء .bak تلقائيًا)',
+                                                style: TextStyle(fontSize: 12, color: AppTheme.textMuted, fontFamily: 'Arabic'),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              TextField(
+                                                maxLines: 12,
+                                                style: const TextStyle(fontFamily: 'Mono', fontSize: 11, color: Color(0xFFE4E4E7)),
+                                                controller: _editorController,
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: const Color(0xFF0D1117),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderSide: const BorderSide(color: AppTheme.glassBorder),
+                                                  ),
                                                 ),
                                               ),
-                                              const SizedBox(width: 8),
-                                              OutlinedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _editedContent = _fileContent;
-                                                    _editing = false;
-                                                  });
-                                                },
-                                                child: const BidiText(data: 'إلغاء', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                              const SizedBox(height: 12),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                      onPressed: _isLoading ? null : _atomicWrite,
+                                                      child: const BidiText(data: 'حفظ ذري مع .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  OutlinedButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _editorController.text = _fileContent;
+                                                        _editing = false;
+                                                      });
+                                                    },
+                                                    child: const BidiText(data: 'إلغاء', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                    if (!_editing)
-                                      CodeBlock(
-                                        code: _fileContent,
-                                        onCopy: () {},
-                                      ),
-                                    if (!_editing && _selectedFile.isNotEmpty)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 8),
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: double.infinity,
-                                              child: ElevatedButton(
-                                                onPressed: _isLoading ? null : () => setState(() => _editing = true),
-                                                child: const BidiText(data: 'تعديل ذري', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            if (_bakContent.isNotEmpty)
-                                              SizedBox(
-                                                width: double.infinity,
-                                                child: OutlinedButton(
-                                                  onPressed: _rollbackFile,
-                                                  child: const BidiText(data: 'تراجع سريع من .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                        if (!_editing)
+                                          CodeBlock(code: _fileContent),
+                                        if (!_editing && _selectedFile.isNotEmpty)
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 8),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: ElevatedButton(
+                                                    onPressed: _isLoading ? null : () => setState(() => _editing = true),
+                                                    child: const BidiText(data: 'تعديل ذري', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                  ),
                                                 ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                                if (_bakContent.isNotEmpty) ...[
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: OutlinedButton(
+                                                      onPressed: _rollbackFile,
+                                                      child: const BidiText(data: 'تراجع سريع من .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
                           ),
                       ],
                     ),
