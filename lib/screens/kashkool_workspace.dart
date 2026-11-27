@@ -96,14 +96,14 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
               ),
               child: Row(
                 children: [
-                  const BidiText(
+                  BidiText(
                     data: 'مساحة عمل كشكول',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                   ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _refreshAll,
-                    child: const BidiText(data: 'تحديث', style: TextStyle(fontSize: 12)),
+                    child: BidiText(data: 'تحديث', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -118,7 +118,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'ملف التعريف المركزي (workshop_profile.json)',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -126,7 +126,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                           if (_profileInfo.isNotEmpty && _profileInfo['exists'] == true)
                             CodeBlock(code: _profileInfo['content'] ?? '')
                           else
-                            const BidiText(
+                            BidiText(
                               data: 'ملف التعريف غير متوفر',
                               style: TextStyle(color: AppTheme.textMuted, fontFamily: 'Arabic'),
                             ),
@@ -138,7 +138,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'مدقق كشكول (fortress-guard)',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -166,7 +166,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'جاهزية كشكول workspace',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -232,7 +232,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'إرسال مهمة كشكول',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -251,7 +251,7 @@ class _KashkoolWorkspaceState extends State<KashkoolWorkspace> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: _promptController.text.trim().isEmpty ? null : () {},
-                              child: const BidiText(data: 'إرسال إلى kashkool-savior', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                              child: BidiText(data: 'إرسال إلى kashkool-savior', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
                             ),
                           ),
                         ],

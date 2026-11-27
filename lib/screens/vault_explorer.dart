@@ -256,7 +256,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                             color: AppTheme.glassSurface,
                             border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
                           ),
-                          child: const BidiText(
+                          child: BidiText(
                             data: 'ملفات المجلد',
                             style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                           ),
@@ -340,7 +340,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              const BidiText(
+                                              BidiText(
                                                 data: 'التعديل الذري (سيتم إنشاء .bak تلقائيًا)',
                                                 style: TextStyle(fontSize: 12, color: AppTheme.textMuted, fontFamily: 'Arabic'),
                                               ),
@@ -364,7 +364,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                                                   Expanded(
                                                     child: ElevatedButton(
                                                       onPressed: _isLoading ? null : _atomicWrite,
-                                                      child: const BidiText(data: 'حفظ ذري مع .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                      child: BidiText(data: 'حفظ ذري مع .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
                                                     ),
                                                   ),
                                                   const SizedBox(width: 8),
@@ -375,7 +375,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                                                         _editing = false;
                                                       });
                                                     },
-                                                    child: const BidiText(data: 'إلغاء', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                    child: BidiText(data: 'إلغاء', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
                                                   ),
                                                 ],
                                               ),
@@ -391,7 +391,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                                                 Expanded(
                                                   child: ElevatedButton(
                                                     onPressed: _isLoading ? null : () => setState(() => _editing = true),
-                                                    child: const BidiText(data: 'تعديل ذري', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                    child: BidiText(data: 'تعديل ذري', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
                                                   ),
                                                 ),
                                                 if (_bakContent.isNotEmpty) ...[
@@ -399,7 +399,7 @@ class _VaultExplorerState extends State<VaultExplorer> {
                                                   Expanded(
                                                     child: OutlinedButton(
                                                       onPressed: _rollbackFile,
-                                                      child: const BidiText(data: 'تراجع سريع من .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
+                                                      child: BidiText(data: 'تراجع سريع من .bak', style: TextStyle(fontFamily: 'Arabic', fontSize: 12)),
                                                     ),
                                                   ),
                                                 ],

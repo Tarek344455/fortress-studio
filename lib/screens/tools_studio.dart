@@ -95,14 +95,14 @@ class _ToolsStudioState extends State<ToolsStudio> {
               ),
               child: Row(
                 children: [
-                  const BidiText(
+                  BidiText(
                     data: 'مركز الأدوات واستوديو كشكول',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                   ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _refreshTools,
-                    child: const BidiText(data: 'تحديث', style: TextStyle(fontSize: 12)),
+                    child: BidiText(data: 'تحديث', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -123,7 +123,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                   color: AppTheme.glassSurface,
                                   border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
                                 ),
-                                child: const BidiText(
+                                child: BidiText(
                                   data: 'أدوات النظام المسجّلة',
                                   style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                                 ),

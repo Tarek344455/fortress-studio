@@ -80,7 +80,7 @@ class _SettingsState extends State<Settings> {
                 color: AppTheme.glassSurface,
                 border: Border(bottom: BorderSide(color: AppTheme.glassBorder, width: 1)),
               ),
-              child: const BidiText(
+              child: BidiText(
                 data: 'الإعدادات والبيئة',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
               ),
@@ -98,8 +98,8 @@ class _SettingsState extends State<Settings> {
                   }
                   if (index == _paths.length) {
                     return ListTile(
-                      title: const BidiText(data: 'الحارس والتحقق', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
-                      subtitle: const BidiText(
+                      title: BidiText(data: 'الحارس والتحقق', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      subtitle: BidiText(
                         data: 'التحقق من fortress-guard وسلامة الملفات',
                         style: TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
                       ),
@@ -109,7 +109,7 @@ class _SettingsState extends State<Settings> {
                   }
                   if (index == _paths.length + 1) {
                     return ListTile(
-                      title: const BidiText(data: 'توفر ترمكس', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      title: BidiText(data: 'توفر ترمكس', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
                         data: 'مثبت: ${_termuxInfo['installed'] == true ? "نعم" : "لا"} | التطبيقات الخارجية: ${_termuxInfo['allowExternalApps'] == true ? "نعم" : "لا"}',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
@@ -120,7 +120,7 @@ class _SettingsState extends State<Settings> {
                   }
                   if (index == _paths.length + 2) {
                     return ListTile(
-                      title: const BidiText(data: 'أذونات التخزين', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      title: BidiText(data: 'أذونات التخزين', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
                         data: 'ممنوح: ${storageOk ? "نعم" : "لا"}',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
@@ -134,7 +134,7 @@ class _SettingsState extends State<Settings> {
                   }
                   if (index == _paths.length + 3) {
                     return ListTile(
-                      title: const BidiText(data: 'كشكول workspace', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      title: BidiText(data: 'كشكول workspace', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
                         data: kashkoolReady ? 'جاهز (Flutter + Supabase + kashkool_ai_client)' : 'غير مكتمل',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),
@@ -145,7 +145,7 @@ class _SettingsState extends State<Settings> {
                   }
                   if (index == _paths.length + 4) {
                     return ListTile(
-                      title: const BidiText(data: 'ملف APK', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
+                      title: BidiText(data: 'ملف APK', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                       subtitle: BidiText(
                         data: apkExists ? 'موجود (23 ميجابايت)' : 'غير موجود',
                         style: const TextStyle(fontFamily: 'Arabic', color: AppTheme.textSecondary),

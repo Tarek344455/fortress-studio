@@ -180,7 +180,7 @@ class _CommandDeckState extends State<CommandDeck> {
               ),
               child: Row(
                 children: [
-                  const BidiText(
+                  BidiText(
                     data: 'FORTRESS STUDIO',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.accentCyan, fontFamily: 'Arabic'),
                     forceLtr: true,
@@ -188,7 +188,7 @@ class _CommandDeckState extends State<CommandDeck> {
                   const Spacer(),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _refreshAll,
-                    child: const BidiText(data: 'تحديث الحالة', style: TextStyle(fontSize: 12)),
+                    child: BidiText(data: 'تحديث الحالة', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -203,7 +203,7 @@ class _CommandDeckState extends State<CommandDeck> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'حالة النظام والجسر الأصلي',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -233,7 +233,7 @@ class _CommandDeckState extends State<CommandDeck> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'kashkool-savior - الموجّه الموحّد',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -310,7 +310,7 @@ class _CommandDeckState extends State<CommandDeck> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'المحطة الطرفية (Alpine proot)',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
@@ -364,7 +364,7 @@ class _CommandDeckState extends State<CommandDeck> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BidiText(
+                          BidiText(
                             data: 'الحارس الحتمي (Fortress Guard)',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, fontFamily: 'Arabic'),
                           ),
