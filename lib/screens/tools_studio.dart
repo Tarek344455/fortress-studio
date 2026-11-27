@@ -37,9 +37,6 @@ class _ToolsStudioState extends State<ToolsStudio> {
   Future<void> _refreshTools() async {
     setState(() => _isLoading = true);
     try {
-      final installed = <CliTool>[];
-      for (final tool in widget.bridge.routingEngine.profiles.expand((p) => p.agents).toSet().isNotEmpty ? <CliTool>[] : <CliTool>[]) {}
-      for (final tool in widget.bridge.routingEngine.profiles.expand((p) => p.agents).toList()) {}
       final cliService = CliService(bridge: widget.bridge);
       final refreshed = await cliService.refreshTools();
       if (!mounted) return;
