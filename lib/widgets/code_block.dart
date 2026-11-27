@@ -13,7 +13,7 @@ class CodeBlock extends StatelessWidget {
       await Clipboard.setData(ClipboardData(text: code));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: BidiText(data: 'تم النسخ'),
             duration: Duration(seconds: 1),
           ),
@@ -38,7 +38,7 @@ class CodeBlock extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 child: BidiText(
                   data: 'COMMAND / PATH',

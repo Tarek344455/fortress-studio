@@ -130,7 +130,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                               ),
                               Expanded(
                                 child: _tools.isEmpty
-                                    ? const Center(
+                                    ? Center(
                                         child: BidiText(
                                           data: 'لا توجد أدوات',
                                           style: TextStyle(color: AppTheme.textMuted, fontFamily: 'Arabic'),
@@ -251,7 +251,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                         ),
                         Expanded(
                           child: _commandOutput.isEmpty
-                              ? const Center(
+                              ? Center(
                                   child: BidiText(
                                     data: 'لا يوجد مخرجات',
                                     style: TextStyle(color: AppTheme.textMuted, fontFamily: 'Arabic'),

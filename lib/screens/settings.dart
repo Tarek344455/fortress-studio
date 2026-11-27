@@ -154,7 +154,7 @@ class _SettingsState extends State<Settings> {
                       onTap: _refreshAll,
                     );
                   }
-                  return const ListTile(
+                  return ListTile(
                     title: BidiText(data: 'حول التطبيق', style: TextStyle(fontFamily: 'Arabic', fontWeight: FontWeight.w500)),
                     subtitle: BidiText(
                       data: 'Fortress Studio - مركز قيادة احترافي',
