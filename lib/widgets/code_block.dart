@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 
 class CodeBlock extends StatelessWidget {

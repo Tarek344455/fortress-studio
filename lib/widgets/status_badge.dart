@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/bidi_text.dart';
 
 class StatusBadge extends StatelessWidget {
   final String status;
@@ -13,9 +14,9 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
+        border: Border.all(color: color.withOpacity(0.5), width: 1),
       ),
       child: BidiText(
         data: status.toUpperCase(),

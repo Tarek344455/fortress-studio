@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/code_block.dart';
+import '../services/native_bridge.dart';
 
 class VaultExplorer extends StatefulWidget {
   final NativeBridge bridge;

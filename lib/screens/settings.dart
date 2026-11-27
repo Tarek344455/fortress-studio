@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/code_block.dart';
 import '../widgets/status_badge.dart';
+import '../services/native_bridge.dart';
 
 class Settings extends StatefulWidget {
   final NativeBridge bridge;

@@ -67,7 +67,7 @@ class AppTheme {
         labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textPrimary, fontFamily: 'Arabic'),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: accentCyan.withValues(alpha: 0.3),
+        selectionColor: accentCyan.withOpacity(0.3),
       ),
     );
   }
@@ -104,35 +104,6 @@ class GlassCard extends StatelessWidget {
         border: bordered ? Border.all(color: AppTheme.glassBorder, width: 1) : null,
       ),
       child: Padding(padding: padding, child: child),
-    );
-  }
-}
-
-class StatusBadge extends StatelessWidget {
-  final String status;
-  final double fontSize;
-
-  const StatusBadge({super.key, required this.status, this.fontSize = 12});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = AppTheme.statusColor(status);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
-      ),
-      child: Text(
-        status.toUpperCase(),
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Mono',
-        ),
-      ),
     );
   }
 }

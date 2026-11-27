@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
 import '../widgets/status_badge.dart';
 import '../widgets/code_block.dart';
+import '../services/native_bridge.dart';
 
 class ToolsStudio extends StatefulWidget {
   final NativeBridge bridge;
@@ -29,12 +30,6 @@ class _ToolsStudioState extends State<ToolsStudio> {
     {'name': 'claude-free', 'command': 'claude-free', 'description': 'كلود فري عبر بروكسي سفير'},
     {'name': 'agy-cli', 'command': 'agy-cli', 'description': 'أداة أي جي آي'},
     {'name': 'kashkool-studio', 'command': 'kashkool-studio', 'description': 'استوديو كشكول'},
-  ];
-
-  final List<Map<String, String>> _kashkoolWorkspace = [
-    {'name': 'kashkool-savior', 'command': 'kashkool-savior', 'description': 'الموجّه الموحّد للموديلات والملصقات'},
-    {'name': 'antigravity', 'command': 'antigravity', 'description': 'المزامنة والربط مع مستودعات GitHub'},
-    {'name': 'kashkool-ai-client', 'command': 'kashkool-ai-client', 'description': 'عميل كشكول للذكاء الاصطناعي'},
   ];
 
   @override
@@ -161,7 +156,7 @@ class _ToolsStudioState extends State<ToolsStudio> {
                                     trailing: StatusBadge(status: tool['isInstalled'] ? 'PASS' : 'FAIL'),
                                     selected: selected,
                                     onTap: () => setState(() => _selectedTool = tool['name']),
-                                    tileColor: selected ? AppTheme.accentCyan.withValues(alpha: 0.1) : null,
+                                    tileColor: selected ? AppTheme.accentCyan.withOpacity(0.1) : null,
                                   );
                                 },
                               ),

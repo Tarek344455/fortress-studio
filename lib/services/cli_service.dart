@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import '../models/cli_tool.dart';
@@ -6,14 +7,14 @@ class CliService {
   static const Duration commandTimeout = Duration(seconds: 30);
 
   final List<CliTool> registeredTools = [
-    CliTool(name: 'trinity', command: 'trinity', description: 'Trinity Fortress orchestrator'),
-    CliTool(name: 'fortress-guard', command: 'fortress-guard', description: 'System verification guard'),
-    CliTool(name: 'start-savior', command: 'start-savior', description: 'Start Savior proxy on port 4000'),
-    CliTool(name: 'start-deck', command: 'start-deck', description: 'Start Fortress Deck on port 4050'),
-    CliTool(name: 'opencode', command: 'opencode', description: 'OpenCode CLI'),
-    CliTool(name: 'claude-free', command: 'claude-free', description: 'Claude-free via Savior proxy'),
-    CliTool(name: 'agy-cli', command: 'agy-cli', description: 'agy-cli AI tool'),
-    CliTool(name: 'kashkool-studio', command: 'kashkool-studio', description: 'Kashkool media studio'),
+    CliTool(name: 'trinity', command: 'trinity', description: 'Trinity Fortress orchestrator', isInstalled: false),
+    CliTool(name: 'fortress-guard', command: 'fortress-guard', description: 'System verification guard', isInstalled: false),
+    CliTool(name: 'start-savior', command: 'start-savior', description: 'Start Savior proxy on port 4000', isInstalled: false),
+    CliTool(name: 'start-deck', command: 'start-deck', description: 'Start Fortress Deck on port 4050', isInstalled: false),
+    CliTool(name: 'opencode', command: 'opencode', description: 'OpenCode CLI', isInstalled: false),
+    CliTool(name: 'claude-free', command: 'claude-free', description: 'Claude-free via Savior proxy', isInstalled: false),
+    CliTool(name: 'agy-cli', command: 'agy-cli', description: 'agy-cli AI tool', isInstalled: false),
+    CliTool(name: 'kashkool-studio', command: 'kashkool-studio', description: 'Kashkool media studio', isInstalled: false),
   ];
 
   Future<CliToolResult> runCommand(String command, List<String> args) async {

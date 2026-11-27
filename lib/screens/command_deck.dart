@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bidi_text.dart';
-import '../widgets/status_badge.dart';
 import '../widgets/code_block.dart';
+import '../services/native_bridge.dart';
 
 class CommandDeck extends StatefulWidget {
   final NativeBridge bridge;
